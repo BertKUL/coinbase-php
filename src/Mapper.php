@@ -502,7 +502,7 @@ class Mapper
             $coll = new ResourceCollection();
         }
 
-        foreach ($data['data'] as $resource) {
+        foreach ($data as $resource) {
             $coll->add($this->$method($resource));
         }
 
