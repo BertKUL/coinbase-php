@@ -43,10 +43,10 @@ class Configuration
      *
      * @return Configuration A new configuration instance
      */
-    public static function apiKey($apiKey, $apiSecret)
+    public static function apiKey($apiKey, $apiSecret, $passphrase)
     {
         return new static(
-            new ApiKeyAuthentication($apiKey, $apiSecret)
+            new ApiKeyAuthentication($apiKey, $apiSecret, $passphrase)
         );
     }
 
@@ -55,7 +55,7 @@ class Configuration
         $this->authentication = $authentication;
         $this->apiUrl = self::DEFAULT_API_URL;
         $this->apiVersion = self::DEFAULT_API_VERSION;
-        //$this->caBundle = __DIR__.'/../etc/ca-coinbase.crt';
+//        $this->caBundle = __DIR__.'/../etc/ca-coinbase.crt';
         $this->caBundle = __DIR__.'/../etc/cacert.pem';
     }
 
