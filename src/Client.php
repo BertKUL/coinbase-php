@@ -212,7 +212,7 @@ class Client
      */
     public function getAccounts(array $params = [])
     {
-        return $this->getAndMapCollection('/v2/accounts', $params, 'toAccounts');
+        return $this->getAndMapCollection('/accounts', $params, 'toAccounts');
     }
 
     public function loadNextAccounts(ResourceCollection $accounts, array $params = [])
@@ -633,7 +633,7 @@ class Client
      */
     public function getOrders(array $params = [])
     {
-        return $this->getAndMapCollection('/v2/orders', $params, 'toOrders');
+        return $this->getAndMapCollection('/orders', $params, 'toOrders');
     }
 
     public function loadNextOrders(ResourceCollection $orders, array $params = [])
