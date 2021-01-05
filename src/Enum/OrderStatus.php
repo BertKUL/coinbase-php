@@ -7,11 +7,9 @@ namespace Coinbase\Wallet\Enum;
  */
 class OrderStatus
 {
-    const ACTIVE = 'active';
-    const EXPIRED = 'expired';
-    const MISPAID = 'mispaid';
-    const PAID = 'paid';
+    const OPEN = 'open';
     const PENDING = 'pending';
+    const ACTIVE = 'active';
 
     private function __construct()
     {

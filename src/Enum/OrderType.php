@@ -7,9 +7,8 @@ namespace Coinbase\Wallet\Enum;
  */
 class OrderType
 {
-    const DONATION = 'donation';
-    const INVOICE = 'invoice';
-    const ORDER = 'order';
+    const LIMIT = 'limit';
+    const MARKET = 'market';
 
     private function __construct()
     {

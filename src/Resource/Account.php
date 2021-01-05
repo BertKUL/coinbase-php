@@ -30,7 +30,10 @@ class Account extends Resource
     private $balance;
 
     /** @var Money */
-    private $nativeBalance;
+    private $hold;
+
+    /** @var Money */
+    private $available;
 
     /** @var \DateTime */
     private $createdAt;
@@ -47,7 +50,7 @@ class Account extends Resource
      */
     public static function reference($accountId)
     {
-        return new static('/v2/accounts/'.$accountId);
+        return new static('/accounts/' . $accountId);
     }
 
     public function __construct($resourcePath = null)
@@ -85,14 +88,19 @@ class Account extends Resource
         return $this->balance;
     }
 
-    public function getNativeBalance()
+    public function getHold()
     {
-        return $this->nativeBalance;
+        return $this->hold;
     }
 
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    public function getAvailable()
+    {
+        return $this->available;
     }
 
     public function getUpdatedAt()

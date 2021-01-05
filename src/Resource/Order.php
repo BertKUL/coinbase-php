@@ -12,77 +12,44 @@ class Order extends Resource
 {
     use OrderActiveRecord;
 
-    /** @var string */
-    private $code;
-
-    /**
-     * @var string
-     * @see OrderStatus
-     */
-    private $status;
-
     /**
      * @var string
      * @see OrderType
      */
     private $type;
 
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $description;
-
     /** @var Money */
-    private $amount;
-
+    private $price;
+    /** @var string */
+    private $product_id;
+    /** @var string */
+    private $side;
+    /** @var string */
+    private $stp;
+    /** @var string */
+    private $time_in_force;
+    /** @var string */
+    private $post_only;
     /** @var Money */
-    private $payoutAmount;
-
-    /** @var string */
-    private $bitcoinAddress;
-
+    private $fill_fees;
     /** @var Money */
-    private $bitcoinAmount;
-
-    /** @var string */
-    private $notificationsUrl;
-
-    /** @var string */
-    private $bitcoinUri;
-
-    /** @var string */
-    private $receiptUrl;
-
-    /** @var \DateTime */
-    private $expiresAt;
-
-    /** @var \DateTime */
-    private $mispaidAt;
-
-    /** @var \DateTime */
-    private $paidAt;
-
-    /** @var string */
-    private $refundAddress;
-
-    /** @var Transaction */
-    private $transaction;
-
-    /** @var array */
-    private $refunds;
-
-    /** @var array */
-    private $mispayments;
-
-    /** @var array */
-    private $metadata;
+    private $filled_size;
+    /** @var Money */
+    private $executed_value;
+    /** @var boolean */
+    private $settled;
+    /**
+     * @var string
+     * @see OrderStatus
+     */
+    private $status;
 
     /** @var \DateTime */
     private $createdAt;
 
-    /** @var \DateTime */
-    private $updatedAt;
+    //for new orders
+    private $size;
+    private $funds;
 
     /**
      * Creates an order reference.
@@ -93,17 +60,12 @@ class Order extends Resource
      */
     public static function reference($orderId)
     {
-        return new static('/v2/orders/'.$orderId);
+        return new static('/v2/orders/' . $orderId);
     }
 
     public function __construct($resourcePath = null)
     {
         parent::__construct(ResourceType::ORDER, $resourcePath);
-    }
-
-    public function getCode()
-    {
-        return $this->code;
     }
 
     public function getStatus()
@@ -116,123 +78,84 @@ class Order extends Resource
         return $this->type;
     }
 
-    public function getName()
+    public function setType($type)
     {
-        return $this->name;
+        $this->type = $type;
     }
 
-    public function setName($name)
+    public function getPrice()
     {
-        $this->name = $name;
+        return $this->price;
     }
 
-    public function getDescription()
+    public function getProduct_id()
     {
-        return $this->description;
+        return $this->product_id;
     }
 
-    public function setDescription($description)
+    public function setProduct_id($product_id)
     {
-        $this->description = $description;
+        $this->product_id = $product_id;
     }
 
-    public function getAmount()
+
+    public function getSide()
     {
-        return $this->amount;
+        return $this->side;
     }
 
-    public function setAmount($amount)
+    public function setSide($side)
     {
-        $this->amount = $amount;
+        $this->side = $side;
     }
 
-    public function getPayoutAmount()
+    public function getStp()
     {
-        return $this->payoutAmount;
+        return $this->stp;
     }
 
-    public function getBitcoinAddress()
+    public function getTime_in_force()
     {
-        return $this->bitcoinAddress;
+        return $this->time_in_force;
     }
 
-    public function getBitcoinAmount()
+    public function getPost_only()
     {
-        return $this->bitcoinAmount;
+        return $this->post_only;
     }
 
-    public function getNotificationsUrl()
+    public function getFill_fees()
     {
-        return $this->notificationsUrl;
+        return $this->fill_fees;
     }
 
-    public function setNotificationsUrl($notificationsUrl)
+    public function getFilled_size()
     {
-        $this->notificationsUrl = $notificationsUrl;
+        return $this->filled_size;
+    }
+    //base currency
+    public function setSize($amount)
+    {
+        $this->size = $amount;
+    }
+    //quote currency
+    public function setFunds($amount)
+    {
+        $this->funds = $amount;
     }
 
-    public function getBitcoinUri()
+    public function getExecuted_value()
     {
-        return $this->bitcoinUri;
+        return $this->executed_value;
     }
 
-    public function getReceiptUrl()
+    public function getSettled()
     {
-        return $this->receiptUrl;
-    }
-
-    public function getExpiresAt()
-    {
-        return $this->expiresAt;
-    }
-
-    public function getMispaidAt()
-    {
-        return $this->mispaidAt;
-    }
-
-    public function getPaidAt()
-    {
-        return $this->paidAt;
-    }
-
-    public function getRefundAddress()
-    {
-        return $this->refundAddress;
-    }
-
-    public function getTransaction()
-    {
-        return $this->transaction;
-    }
-
-    public function getRefunds()
-    {
-        return $this->refunds;
-    }
-
-    public function getMispayments()
-    {
-        return $this->mispayments;
-    }
-
-    public function getMetadata()
-    {
-        return $this->metadata;
-    }
-
-    public function setMetadata(array $metadata)
-    {
-        $this->metadata = $metadata;
+        return $this->settled;
     }
 
     public function getCreatedAt()
     {
         return $this->createdAt;
-    }
-
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
     }
 }

@@ -17,7 +17,6 @@ class Checkout extends Resource
 
     /**
      * @var string
-     * @see OrderType
      */
     private $type;
 

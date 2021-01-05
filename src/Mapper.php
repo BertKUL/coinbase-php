@@ -46,7 +46,7 @@ class Mapper
     /** @return User */
     public function toUser(ResponseInterface $response, User $user = null)
     {
-        return $this->injectUser($this->decode($response)['data'], $user);
+        return $this->injectUser($this->decode($response), $user);
     }
 
     /** @return array */
@@ -69,7 +69,7 @@ class Mapper
     /** @return Account */
     public function toAccount(ResponseInterface $response, Account $account = null)
     {
-        return $this->injectAccount($this->decode($response)['data'], $account);
+        return $this->injectAccount($this->decode($response), $account);
     }
 
     /** @return array */
@@ -92,7 +92,7 @@ class Mapper
     /** @return Address */
     public function toAddress(ResponseInterface $response, Address $address = null)
     {
-        return $this->injectAddress($this->decode($response)['data'], $address);
+        return $this->injectAddress($this->decode($response), $address);
     }
 
     /** @return array */
@@ -115,7 +115,7 @@ class Mapper
     /** @return Transaction */
     public function toTransaction(ResponseInterface $response, Transaction $transaction = null)
     {
-        return $this->injectTransaction($this->decode($response)['data'], $transaction);
+        return $this->injectTransaction($this->decode($response), $transaction);
     }
 
     /** @return array */
@@ -168,7 +168,7 @@ class Mapper
     /** @return Buy */
     public function toBuy(ResponseInterface $response, Buy $buy = null)
     {
-        return $this->injectBuy($this->decode($response)['data'], $buy);
+        return $this->injectBuy($this->decode($response), $buy);
     }
 
     /** @return array */
@@ -223,7 +223,7 @@ class Mapper
     /** @return Sell */
     public function toSell(ResponseInterface $response, Sell $sell = null)
     {
-        return $this->injectSell($this->decode($response)['data'], $sell);
+        return $this->injectSell($this->decode($response), $sell);
     }
 
     /** @return array */
@@ -278,7 +278,7 @@ class Mapper
     /** @return Deposit */
     public function toDeposit(ResponseInterface $response, Deposit $deposit = null)
     {
-        return $this->injectDeposit($this->decode($response)['data'], $deposit);
+        return $this->injectDeposit($this->decode($response), $deposit);
     }
 
     /** @return array */
@@ -319,7 +319,7 @@ class Mapper
     /** @return Withdrawal */
     public function toWithdrawal(ResponseInterface $response, Withdrawal $withdrawal = null)
     {
-        return $this->injectWithdrawal($this->decode($response)['data'], $withdrawal);
+        return $this->injectWithdrawal($this->decode($response), $withdrawal);
     }
 
     /** @return array */
@@ -360,7 +360,7 @@ class Mapper
     /** @return PaymentMethod */
     public function toPaymentMethod(ResponseInterface $response, PaymentMethod $paymentMethod = null)
     {
-        return $this->injectPaymentMethod($this->decode($response)['data'], $paymentMethod);
+        return $this->injectPaymentMethod($this->decode($response), $paymentMethod);
     }
 
     // merchants
@@ -368,7 +368,7 @@ class Mapper
     /** @return Merchant */
     public function toMerchant(ResponseInterface $response, Merchant $merchant = null)
     {
-        return $this->injectMerchant($this->decode($response)['data'], $merchant);
+        return $this->injectMerchant($this->decode($response), $merchant);
     }
 
     // orders
@@ -382,7 +382,7 @@ class Mapper
     /** @return Order */
     public function toOrder(ResponseInterface $response, Order $order = null)
     {
-        return $this->injectOrder($this->decode($response)['data'], $order);
+        return $this->injectOrder($this->decode($response), $order);
     }
 
     /** @return array */
@@ -391,18 +391,8 @@ class Mapper
         // filter
         $data = array_intersect_key(
             $this->extractData($order),
-            array_flip(['amount', 'name', 'description', 'notifications_url', 'metadata'])
+            array_flip(['client_oid', 'type', 'side', 'product_id', 'stp', 'stop', 'stop_price', 'price', 'size', 'time_in_force', 'cancel_after', 'post_only', 'funds'])
         );
-
-        // currency
-        if (isset($data['amount']['currency'])) {
-            $data['currency'] = $data['amount']['currency'];
-        }
-
-        // amount
-        if (isset($data['amount']['amount'])) {
-            $data['amount'] = $data['amount']['amount'];
-        }
 
         return $data;
     }
@@ -418,7 +408,7 @@ class Mapper
     /** @return Checkout */
     public function toCheckout(ResponseInterface $response, Checkout $checkout = null)
     {
-        return $this->injectCheckout($this->decode($response)['data'], $checkout);
+        return $this->injectCheckout($this->decode($response), $checkout);
     }
 
     /** @return array */
@@ -462,7 +452,7 @@ class Mapper
     /** @return Notification */
     public function toNotification(ResponseInterface $response, Notification $notification = null)
     {
-        return $this->injectNotification($this->decode($response)['data'], $notification);
+        return $this->injectNotification($this->decode($response), $notification);
     }
 
     // misc
@@ -470,13 +460,13 @@ class Mapper
     /** @return array */
     public function toData(ResponseInterface $response)
     {
-        return $this->decode($response)['data'];
+        return $this->decode($response);
     }
 
     /** @return Money|null */
     public function toMoney(ResponseInterface $response)
     {
-        $data = $this->decode($response)['data'];
+        $data = $this->decode($response);
 
         return new Money($data['amount'], $data['currency']);
     }

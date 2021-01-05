@@ -91,17 +91,37 @@ class Client
 
     public function getCurrencies(array $params = [])
     {
-        return $this->getAndMapData('/v2/currencies', $params);
+        return $this->getAndMapData('/currencies', $params);
     }
 
-    public function getExchangeRates($currency = null, array $params = [])
+    public function getProducts(array $params = [])
+    {
+        return $this->getAndMapData('/products', $params);
+    }
+
+    public function getProduct($product_id, array $params = [])
+    {
+        return $this->getAndMapData('/products/' . $product_id, $params);
+    }
+
+    public function getProductOrderBook($product_id, array $params = [])
+    {
+        return $this->getAndMapData('/products/' . $product_id . '/book', $params);
+    }
+
+    public function getStats($product_id, array $params = [])
+    {
+        return $this->getAndMapData('/products/' . $product_id . '/stats', $params);
+    }
+
+    /*public function getExchangeRates($currency = null, array $params = [])
     {
         if ($currency) {
             $params['currency'] = $currency;
         }
 
         return $this->getAndMapData('/v2/exchange-rates', $params);
-    }
+    }*/
 
     public function getBuyPrice($currency = null, array $params = [])
     {
@@ -144,13 +164,9 @@ class Client
         return $this->getAndMapMoney('/v2/prices/' . $pair . '/spot', $params);
     }
 
-    public function getHistoricPrices($currency = null, array $params = [])
+    public function getHistoricRates($product_id = null, array $params = [])
     {
-        if ($currency) {
-            $params['currency'] = $currency;
-        }
-
-        return $this->getAndMapData('/v2/prices/historic', $params);
+        return $this->getAndMapData('/products/' . $product_id . '/candles', $params);
     }
 
     public function getTime(array $params = [])
@@ -175,7 +191,7 @@ class Client
     /** @return User */
     public function getUser($userId, array $params = [])
     {
-        return $this->getAndMap('/v2/users/'.$userId, $params, 'toUser');
+        return $this->getAndMap('/v2/users/' . $userId, $params, 'toUser');
     }
 
     public function refreshUser(User $user, array $params = [])
@@ -223,7 +239,7 @@ class Client
     /** @return Account */
     public function getAccount($accountId, array $params = [])
     {
-        return $this->getAndMap('/v2/accounts/'.$accountId, $params, 'toAccount');
+        return $this->getAndMap('/accounts/' . $accountId, $params, 'toAccount');
     }
 
     public function refreshAccount(Account $account, array $params = [])
@@ -245,7 +261,7 @@ class Client
 
     public function setPrimaryAccount(Account $account, array $params = [])
     {
-        $this->postAndMap($account->getResourcePath().'/primary', $params, 'toAccount', $account);
+        $this->postAndMap($account->getResourcePath() . '/primary', $params, 'toAccount', $account);
     }
 
     public function updateAccount(Account $account, array $params = [])
@@ -271,7 +287,7 @@ class Client
      */
     public function getAccountAddresses(Account $account, array $params = [])
     {
-        return $this->getAndMapCollection($account->getResourcePath().'/addresses', $params, 'toAddresses');
+        return $this->getAndMapCollection($account->getResourcePath() . '/addresses', $params, 'toAddresses');
     }
 
     public function loadNextAddresses(ResourceCollection $addresses, array $params = [])
@@ -301,7 +317,7 @@ class Client
      */
     public function getAddressTransactions(Address $address, array $params = [])
     {
-        return $this->getAndMapCollection($address->getResourcePath().'/transactions', $params, 'toTransactions');
+        return $this->getAndMapCollection($address->getResourcePath() . '/transactions', $params, 'toTransactions');
     }
 
     public function loadNextAddressTransactions(ResourceCollection $transactions, array $params = [])
@@ -312,7 +328,7 @@ class Client
     public function createAccountAddress(Account $account, Address $address, array $params = [])
     {
         $data = $this->mapper->fromAddress($address);
-        return $this->postAndMap($account->getResourcePath().'/addresses', $data + $params, 'toAddress', $address);
+        return $this->postAndMap($account->getResourcePath() . '/addresses', $data + $params, 'toAddress', $address);
     }
 
     // transactions
@@ -326,7 +342,7 @@ class Client
      */
     public function getAccountTransactions(Account $account, array $params = [])
     {
-        return $this->getAndMapCollection($account->getResourcePath().'/transactions', $params, 'toTransactions');
+        return $this->getAndMapCollection($account->getResourcePath() . '/transactions', $params, 'toTransactions');
     }
 
     public function loadNextTransactions(ResourceCollection $transactions, array $params = [])
@@ -359,17 +375,17 @@ class Client
     public function createAccountTransaction(Account $account, Transaction $transaction, array $params = [])
     {
         $data = $this->mapper->fromTransaction($transaction);
-        $this->postAndMap($account->getResourcePath().'/transactions', $data + $params, 'toTransaction', $transaction);
+        $this->postAndMap($account->getResourcePath() . '/transactions', $data + $params, 'toTransaction', $transaction);
     }
 
     public function completeTransaction(Transaction $transaction, array $params = [])
     {
-        $this->http->post($transaction->getResourcePath().'/complete', $params);
+        $this->http->post($transaction->getResourcePath() . '/complete', $params);
     }
 
     public function resendTransaction(Transaction $transaction, array $params = [])
     {
-        $this->http->post($transaction->getResourcePath().'/resend', $params);
+        $this->http->post($transaction->getResourcePath() . '/resend', $params);
     }
 
     public function cancelTransaction(Transaction $transaction, array $params = [])
@@ -388,7 +404,7 @@ class Client
      */
     public function getAccountBuys(Account $account, array $params = [])
     {
-        return $this->getAndMapCollection($account->getResourcePath().'/buys', $params, 'toBuys');
+        return $this->getAndMapCollection($account->getResourcePath() . '/buys', $params, 'toBuys');
     }
 
     public function loadNextBuys(ResourceCollection $buys, array $params = [])
@@ -421,12 +437,12 @@ class Client
     public function createAccountBuy(Account $account, Buy $buy, array $params = [])
     {
         $data = $this->mapper->fromBuy($buy);
-        $this->postAndMap($account->getResourcePath().'/buys', $data + $params, 'toBuy', $buy);
+        $this->postAndMap($account->getResourcePath() . '/buys', $data + $params, 'toBuy', $buy);
     }
 
     public function commitBuy(Buy $buy, array $params = [])
     {
-        $this->postAndMap($buy->getResourcePath().'/commit', $params, 'toBuy', $buy);
+        $this->postAndMap($buy->getResourcePath() . '/commit', $params, 'toBuy', $buy);
     }
 
     // sells
@@ -440,7 +456,7 @@ class Client
      */
     public function getAccountSells(Account $account, array $params = [])
     {
-        return $this->getAndMapCollection($account->getResourcePath().'/sells', $params, 'toSells');
+        return $this->getAndMapCollection($account->getResourcePath() . '/sells', $params, 'toSells');
     }
 
     public function loadNextSells(ResourceCollection $sells, array $params = [])
@@ -473,12 +489,12 @@ class Client
     public function createAccountSell(Account $account, Sell $sell, array $params = [])
     {
         $data = $this->mapper->fromSell($sell);
-        $this->postAndMap($account->getResourcePath().'/sells', $data + $params, 'toSell', $sell);
+        $this->postAndMap($account->getResourcePath() . '/sells', $data + $params, 'toSell', $sell);
     }
 
     public function commitSell(Sell $sell, array $params = [])
     {
-        $this->postAndMap($sell->getResourcePath().'/commit', $params, 'toSell', $sell);
+        $this->postAndMap($sell->getResourcePath() . '/commit', $params, 'toSell', $sell);
     }
 
     // deposits
@@ -492,7 +508,7 @@ class Client
      */
     public function getAccountDeposits(Account $account, array $params = [])
     {
-        return $this->getAndMapCollection($account->getResourcePath().'/deposits', $params, 'toDeposits');
+        return $this->getAndMapCollection($account->getResourcePath() . '/deposits', $params, 'toDeposits');
     }
 
     public function loadNextDeposits(ResourceCollection $deposits, array $params = [])
@@ -523,12 +539,12 @@ class Client
     public function createAccountDeposit(Account $account, Deposit $deposit, array $params = [])
     {
         $data = $this->mapper->fromDeposit($deposit);
-        $this->postAndMap($account->getResourcePath().'/deposits', $data + $params, 'toDeposit', $deposit);
+        $this->postAndMap($account->getResourcePath() . '/deposits', $data + $params, 'toDeposit', $deposit);
     }
 
     public function commitDeposit(Deposit $deposit, array $params = [])
     {
-        $this->postAndMap($deposit->getResourcePath().'/commit', $params, 'toDeposit', $deposit);
+        $this->postAndMap($deposit->getResourcePath() . '/commit', $params, 'toDeposit', $deposit);
     }
 
     // withdrawals
@@ -542,7 +558,7 @@ class Client
      */
     public function getAccountWithdrawals(Account $account, array $params = [])
     {
-        return $this->getAndMapCollection($account->getResourcePath().'/withdrawals', $params, 'toWithdrawals');
+        return $this->getAndMapCollection($account->getResourcePath() . '/withdrawals', $params, 'toWithdrawals');
     }
 
     public function loadNextWithdrawals(ResourceCollection $withdrawals, array $params = [])
@@ -573,12 +589,12 @@ class Client
     public function createAccountWithdrawal(Account $account, Withdrawal $withdrawal, array $params = [])
     {
         $data = $this->mapper->fromWithdrawal($withdrawal);
-        $this->postAndMap($account->getResourcePath().'/withdrawals', $data + $params, 'toWithdrawal', $withdrawal);
+        $this->postAndMap($account->getResourcePath() . '/withdrawals', $data + $params, 'toWithdrawal', $withdrawal);
     }
 
     public function commitWithdrawal(Withdrawal $withdrawal, array $params = [])
     {
-        $this->postAndMap($withdrawal->getResourcePath().'/commit', $params, 'toWithdrawal', $withdrawal);
+        $this->postAndMap($withdrawal->getResourcePath() . '/commit', $params, 'toWithdrawal', $withdrawal);
     }
 
     // payment methods
@@ -603,7 +619,7 @@ class Client
     /** @return PaymentMethod */
     public function getPaymentMethod($paymentMethodId, array $params = [])
     {
-        return $this->getAndMap('/v2/payment-methods/'.$paymentMethodId, $params, 'toPaymentMethod');
+        return $this->getAndMap('/v2/payment-methods/' . $paymentMethodId, $params, 'toPaymentMethod');
     }
 
     public function refreshPaymentMethod(PaymentMethod $paymentMethod, array $params = [])
@@ -616,7 +632,7 @@ class Client
     /** @return Merchant */
     public function getMerchant($merchantId, array $params = [])
     {
-        return $this->getAndMap('/v2/merchants/'.$merchantId, $params, 'toMerchant');
+        return $this->getAndMap('/v2/merchants/' . $merchantId, $params, 'toMerchant');
     }
 
     public function refreshMerchant(Merchant $merchant, array $params = [])
@@ -633,7 +649,17 @@ class Client
      */
     public function getOrders(array $params = [])
     {
-        return $this->getAndMapCollection('/orders', $params, 'toOrders');
+        return $this->getAndMapData('/orders', $params);
+    }
+
+    public function getFills(array $params = [])
+    {
+        return $this->getAndMapData('/fills', $params);
+    }
+
+    public function getOrdersAsCollections(array $params = [])
+    {
+        return $this->getAndMapCollection('/orders', $params);
     }
 
     public function loadNextOrders(ResourceCollection $orders, array $params = [])
@@ -644,7 +670,7 @@ class Client
     /** @return Order */
     public function getOrder($orderId, array $params = [])
     {
-        return $this->getAndMap('/v2/orders/'.$orderId, $params, 'toOrder');
+        return $this->getAndMap('/v2/orders/' . $orderId, $params, 'toOrder');
     }
 
     public function refreshOrder(Order $order, array $params = [])
@@ -655,7 +681,7 @@ class Client
     public function createOrder(Order $order, array $params = [])
     {
         $data = $this->mapper->fromOrder($order);
-        $this->postAndMap('/v2/orders', $data + $params, 'toOrder', $order);
+        return $this->postAndMap('/orders', $data + $params, 'toOrder', $order);
     }
 
     /**
@@ -670,7 +696,7 @@ class Client
     {
         $params['currency'] = $currency;
 
-        $this->postAndMap($order->getResourcePath().'/refund', $params, 'toOrder', $order);
+        $this->postAndMap($order->getResourcePath() . '/refund', $params, 'toOrder', $order);
     }
 
     /**
@@ -693,7 +719,7 @@ class Client
     /** @return Checkout */
     public function getCheckout($checkoutId, array $params = [])
     {
-        return $this->getAndMap('/v2/checkouts/'.$checkoutId, $params, 'toCheckout');
+        return $this->getAndMap('/v2/checkouts/' . $checkoutId, $params, 'toCheckout');
     }
 
     public function refreshCheckout(Checkout $checkout, array $params = [])
@@ -727,7 +753,7 @@ class Client
     /** @return Notification */
     public function getNotification($notificationId, array $params = [])
     {
-        return $this->getAndMap('/v2/notifications/'.$notificationId, $params, 'toNotification');
+        return $this->getAndMap('/v2/notifications/' . $notificationId, $params, 'toNotification');
     }
 
     public function refreshNotification(Notification $notification, array $params = [])
@@ -753,7 +779,7 @@ class Client
      */
     public function verifyCallback($body, $signature)
     {
-        $signature_buffer = base64_decode( $signature );
+        $signature_buffer = base64_decode($signature);
         return (1 == openssl_verify($body, $signature_buffer, self::getCallbackPublicKey(), OPENSSL_ALGO_SHA256));
     }
 
@@ -792,7 +818,7 @@ EOD;
      */
     public function getCheckoutOrders(Checkout $checkout, array $params = [])
     {
-        return $this->getAndMapCollection($checkout->getResourcePath().'/orders', $params, 'toOrders');
+        return $this->getAndMapCollection($checkout->getResourcePath() . '/orders', $params, 'toOrders');
     }
 
     public function loadNextCheckoutOrders(ResourceCollection $orders, array $params = [])
@@ -803,7 +829,7 @@ EOD;
     /** @return Order */
     public function createNewCheckoutOrder(Checkout $checkout, array $params = [])
     {
-        return $this->postAndMap($checkout->getResourcePath().'/orders', $params, 'toOrder');
+        return $this->postAndMap($checkout->getResourcePath() . '/orders', $params, 'toOrder');
     }
 
     // private
